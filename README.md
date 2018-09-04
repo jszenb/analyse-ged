@@ -2,7 +2,7 @@
 Scripts python permettant d'extraire diverses informations des données du SID Chantier
 
 # ******************************************************************************
-PROGRAMME   : anasegment.py
+PROGRAMME   : anasegment.py<br>
 DESCRIPTION : Ce traitement identifie dans un fichier MARC passé en format 
               texte les zones 600, 606 et 607 qui contiennent de l'indexation 
               RAMEAU à la condition que la notice concernée soit orientée dans
