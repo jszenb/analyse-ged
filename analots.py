@@ -46,7 +46,7 @@ def    validArgs(tabArgs):
     # paramètre et arrêt du traitement.
     if (len(tabArgs) != 4):
         print "LOG : Erreur dans le passage des arguments : "
-        print "LOG : --> usage : python anasegment valeur-lot fichier-entree radical-fichier-sortie"
+        print "LOG : --> usage : python analots valeur-lot fichier-entree radical-fichier-sortie"
         print "LOG : --> Vérifiez votre commande !"
         print "LOG : --> ATTENTION : saisissez le lot avec son segment. Ex. : B32 615 et non 615 seulement."
         print "LOG : Fin du traitement"
@@ -125,9 +125,59 @@ if os.path.isfile(ficEntree):
                         trouve689 = False
                         
         elif ( line in ['\n', '\r\n'] ):
-            # Fin de la notice : on réinitialise tout en prévision de la prochaine
-            #print "LOG : Fin de la notice en cours atteinte"
+            # Fin de la notice : reconstruction des chaînes et réinitialisation
+            # avant passage à la notice suivante
             # ******************************************************************
+
+            # Reconstruction des chaînes d'indexation si la condition sur le segment 
+            # a été vérifiée.
+            # **********************************************************************
+            if (trouve689):
+            
+                for indexation in tabIndexation:
+            
+                    chaineRameau = ""
+                    
+                    # Liste des champs nécessaires pour construire la chaîne 
+                    # d'indexation.
+                    # **************************************************************
+                    if ( indexation.startswith("600") ):
+                        tabChamps = ["a", "b", "c", "d", "e"]
+                    elif ( indexation.startswith("606") or\
+                           indexation.startswith("607") ):
+                        tabChamps = ["a", "x", "y", "z"]
+                    else: # C'est une 610
+                        tabChamps = ["a"]
+            
+                    # Construction de la chaîne d'indexation :
+                    # **************************************************************
+                    for word in indexation.split("$"): 
+            
+                        for champs in tabChamps:
+                            # Une chaine d'indexation est construite à partir de 
+                            # la zone a suivie des autres dans l'ordre de tabChamps
+                            # ******************************************************
+                            if (word.startswith(champs)):
+                                if (champs == "a"):
+                                    chaineRameau = word[2:].strip() 
+                                else:
+                                    chaineRameau += " -- " +  word[2:].strip()
+                    ##for : Fin boucle analyse d'une ligne 606, 607, 600 ou 610
+            
+                    # On stocke la chaine d'indexation reconstruite.
+                    # **************************************************************
+                    if chaineRameau != "":
+                        if (indexation.startswith("600")):
+                            ecritRameau(chaineRameau, wordcount600)
+                        elif (indexation.startswith("606")):
+                            ecritRameau(chaineRameau, wordcount606)
+                        elif (indexation.startswith("607")):
+                            ecritRameau(chaineRameau, wordcount607)        
+                        elif (indexation.startswith("610")):
+                            ecritRameau(chaineRameau, wordcount610)    
+        
+            ##for : Fin de l'analyse de toutes les indexation pour la notice en cours
+
             trouve689 = False
             tabIndexation=[]
             i = 0
@@ -135,54 +185,6 @@ if os.path.isfile(ficEntree):
         else:
             continue # on passe à la ligne suivante 
 
-        # Reconstruction des chaînes d'indexation si la condition sur le segment 
-        # a été vérifiée.
-        # **********************************************************************
-        if (trouve689):
-
-            for indexation in tabIndexation:
-
-                chaineRameau = ""
-                
-                # Liste des champs nécessaires pour construire la chaîne 
-                # d'indexation.
-                # **************************************************************
-                if ( indexation.startswith("600") ):
-                    tabChamps = ["a", "b", "c", "d", "e"]
-                elif ( indexation.startswith("606") or\
-                       indexation.startswith("607") ):
-                    tabChamps = ["a", "x", "y", "z"]
-                else: # C'est une 610
-                    tabChamps = ["a"]
-
-                # Construction de la chaîne d'indexation :
-                # **************************************************************
-                for word in indexation.split("$"): 
-
-                    for champs in tabChamps:
-                        # Une chaine d'indexation est construite à partir de 
-                        # la zone a suivie des autres dans l'ordre de tabChamps
-                        # ******************************************************
-                        if (word.startswith(champs)):
-                            if (champs == "a"):
-                                chaineRameau = word[2:].strip() 
-                            else:
-                                chaineRameau += " -- " +  word[2:].strip()
-                ##for : Fin boucle analyse d'une ligne 606, 607, 600 ou 610
-
-                # On stocke la chaine d'indexation reconstruite.
-                # **************************************************************
-                if chaineRameau != "":
-                    if (indexation.startswith("600")):
-                        ecritRameau(chaineRameau, wordcount600)
-                    elif (indexation.startswith("606")):
-                        ecritRameau(chaineRameau, wordcount606)
-                    elif (indexation.startswith("607")):
-                        ecritRameau(chaineRameau, wordcount607)        
-                    elif (indexation.startswith("610")):
-                        ecritRameau(chaineRameau, wordcount610)             
-            
-            ##for : Fin de l'analyse de toutes les indexation pour la notice en cours
     
     ##for : Fin de la boucle de lecture du fichier marc
     

@@ -121,58 +121,60 @@ if os.path.isfile(ficEntree):
                         trouve689 = False
                         
         elif ( line in ['\n', '\r\n'] ):
-            # Fin de la notice : on réinitialise tout en prévision de la prochaine
-            #print "LOG : Fin de la notice en cours atteinte"
+            # Fin de la notice : reconstruction des chaînes et réinitialisation
+            # avant passage à la notice suivante
             # ******************************************************************
+
+            # Reconstruction des chaînes d'indexation si la condition sur le segment 
+            # a été vérifiée.
+            # **********************************************************************
+            if (trouve689):
+            
+                for indexation in tabIndexation:
+            
+                    chaineRameau = ""
+                    
+                    # Liste des champs nécessaires pour construire la chaîne Rameau
+                    # **************************************************************
+                    if ( indexation.startswith("600") ):
+                        tabChamps = ["a", "b", "c", "d", "e"]
+                    else:
+                        tabChamps = ["a", "x", "y", "z"]
+            
+                    # Construction de la chaîne Rameau :
+                    # **************************************************************
+                    for word in indexation.split("$"): 
+            
+                        for champs in tabChamps:
+                            # Une chaine Rameau est construite à partir des zones a,  
+                            # x, y et z.
+                            # ******************************************************
+                            if (word.startswith(champs)):
+                                if (champs == "a"):
+                                    chaineRameau = word[2:].strip() 
+                                else:
+                                    chaineRameau += " -- " +  word[2:].strip()
+                    ##for : Fin boucle analyse d'une ligne 606, 607 ou 600
+            
+                    # On stocke la chaine Rameau reconstruite.
+                    # **************************************************************
+                    if chaineRameau != "":
+                        if (indexation.startswith("600")):
+                            ecritRameau(chaineRameau, wordcount600)
+                        elif (indexation.startswith("606")):
+                            ecritRameau(chaineRameau, wordcount606)
+                        elif (indexation.startswith("607")):
+                            ecritRameau(chaineRameau, wordcount607)                    
+                
+                ##for : Fin de l'analyse de toutes les indexation pour la notice en cours
+
+
             trouve689 = False
             tabIndexation=[]
             i = 0
             continue # on passe à la ligne suivante 
         else:
             continue # on passe à la ligne suivante 
-
-        # Reconstruction des chaînes Rameau si la condition sur le segment a été
-        # vérifiée.
-        # **********************************************************************
-        if (trouve689):
-
-            for indexation in tabIndexation:
-
-                chaineRameau = ""
-                
-                # Liste des champs nécessaires pour construire la chaîne Rameau
-                # **************************************************************
-                if ( indexation.startswith("600") ):
-                    tabChamps = ["a", "b", "c", "d", "e"]
-                else:
-                    tabChamps = ["a", "x", "y", "z"]
-
-                # Construction de la chaîne Rameau :
-                # **************************************************************
-                for word in indexation.split("$"): 
-
-                    for champs in tabChamps:
-                        # Une chaine Rameau est construite à partir des zones a,  
-                        # x, y et z.
-                        # ******************************************************
-                        if (word.startswith(champs)):
-                            if (champs == "a"):
-                                chaineRameau = word[2:].strip() 
-                            else:
-                                chaineRameau += " -- " +  word[2:].strip()
-                ##for : Fin boucle analyse d'une ligne 606, 607 ou 600
-
-                # On stocke la chaine Rameau reconstruite.
-                # **************************************************************
-                if chaineRameau != "":
-                    if (indexation.startswith("600")):
-                        ecritRameau(chaineRameau, wordcount600)
-                    elif (indexation.startswith("606")):
-                        ecritRameau(chaineRameau, wordcount606)
-                    elif (indexation.startswith("607")):
-                        ecritRameau(chaineRameau, wordcount607)                    
-            
-            ##for : Fin de l'analyse de toutes les indexation pour la notice en cours
     
     ##for : Fin de la boucle de lecture du fichier marc
     
